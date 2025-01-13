@@ -1,0 +1,78 @@
+;;; Om Namah Shivay! ;;;
+
+;;; Include All Files here
+[Include	: Refresh TDL.txt]
+[Include	: Classic Invoice Bottom.txt]
+[Include	: Classic Invoice Details.txt]
+[Include	: Classic Invoice Top.txt]
+[Include	: Default Modifiers.txt]
+[Include	: Formulas.txt]
+[Include	: Print Config.txt]
+
+
+; MODIFICATION OF DEFAULT PRINTED INVOICE
+[#Form	: Printed Invoice]
+	Add	: Option	: Classic Comprehensive Invoice	: @@IsPrintEnabled
+
+[!Form	: Classic Comprehensive Invoice]
+	Use			: VATNG VATCSTAnalysis Variables
+	Delete		: Parts
+	Delete		: BottomParts
+	Add			: Parts			: STDInvoiceTop, Classic OpPageBreak, Classic Details
+	Add			: BottomParts 	: Classic Totals ,Classic AmountInWords, Classic SignOff, Jurisdiction
+	Width       : 100% Page
+
+	Page Break  : EXPINV ClPageBreak, Classic OpPageBreak
+
+	;; When Sales Bill is made in Voucher mode, while printing sales ledger is also getting printed
+	Set Always	: SVViewName : If @@IsJobMaterialVchs then $$SysName:MulConsVchView Else $$SysName:InvVchView
+
+	Option   	: Dealer ExcisePurchaseInvoice				: (@@IsExciseTraderOn AND (@@IsPurchase OR @@IsDebitNote) AND @@IsExciseDlrImpVchUnit AND ##PUDealerExciseDutyInfo)
+	/*was used for old databefore 5.0*/                                                        
+	Option      : STX Comprehensive Invoice                 : (@@IsIndianServiceTax AND @@IsSTTaxenabledDate_Vch) AND $$STXCanUpdateDutyLed AND @@SrvLedAnyUndefn
+	Option      : Invoice Bank Info Fetch                   : ##SABankInfo AND NOT $$IsSysName:##SABankName
+	Option  	: GCCVAT Comprehensive Invoice              : @@IsVChGVATApplicable
+	Option  	: GCCVAT Comprehensive Bilingual Invoice    : @@IsVChGVATApplicable AND @@IsSales AND ($$IsEmpty:##SAVATGCCPrintFormatType OR @@IsGCCInvoiceFormatOne) AND @@IsGVATPLangBilingual
+	Option      : GCCVAT Comp English Format2               : @@IsVChGVATApplicable AND @@IsSales AND @@IsGCCInvoiceFormatTwo AND (@@IsGVATPLEnglish OR @@IsGVATPLArabic)
+	Option      : GCCVAT Comp Bilingual Format2             : @@IsVChGVATApplicable AND @@IsSales AND @@IsGCCInvoiceFormatTwo AND @@IsGVATPLangBilingual
+	
+	Option      : GST InvoiceAnalysis
+	Option      : GST Comprehensive Invoice     			: @@IsGSTOnAppl AND @@IsGSTSupportedVchs
+	
+	
+[#Part: EXPINV ClPageBreak]
+	Delete	: Parts	: EXPINV Jurisdiction, EXPINV InvoiceCompGen
+
+
+;Global Settings
+[System: Formula]
+	ClassicColumnWidth		: 5
+	ComprehensiveInvoiceCondition	:	If (@@IsA5PrintEnabled OR @@KeralaInvForm8 OR @@KeralaInvForm8B OR @@KeralaInvForm8D OR (@@GujaratState AND (@@IsIndianRegularVAT AND ##PrintAsVATForm402)) OR (@@IsUAEVATOn AND @@ShowSupplCrNoteInPrn AND @@IsCreditNote)) Then No Else +
+										If @@IsExciseGoodsTransfer AND NOT ##SVExport Then (@@IsJobMaterialIssue AND (##DNMfgrCommercial OR $$IsEmpty:$ExciseRegistrationType:TaxUnit:@@ExciseMfgrInvUnitName OR @@VtypJobWorkEnabled) AND NOT @@InvSimple AND NOT ##JobWorkAnnexureIIPrint) Else +
+										NOT @@IsTraderExciseSalesDNUnit AND NOT @@IsExciseMfgrRule11Print AND NOT (@@IsJobOrderEnabled AND @@IsJobMaterialIssue) AND NOT ##SVExport AND NOT @@PurcAsVoucher AND ($$InPixelMode AND NOT @@InvSimple) 
+										
+	IsA5PrintEnabled				:	@@IsSales AND @@IsPrintA5EnableInConfig
+	
+	;; Print Configuration
+	IsPrintA5EnableInConfig			:	$EnablePrintA5:Company:##SVCurrentCompany
+	ShowHSNCol						:	$ShowHSNColumn:Company:##SVCurrentCompany
+	ShowComCol						:	$ShowCompanyColumn:Company:##SVCurrentCompany
+	ShowBatCol						:	$ShowBatchColumn:Company:##SVCurrentCompany
+	ShowMfgCol						:	$ShowMFGColumn:Company:##SVCurrentCompany
+	ShowExpCol						:	$ShowExpColumn:Company:##SVCurrentCompany
+	ShowQtyCol						:	$ShowQTYColumn:Company:##SVCurrentCompany
+	ShowGRtCol						:	$ShowGSTRColumn:Company:##SVCurrentCompany
+	ShowIRtCol						:	$ShowIRteColumn:Company:##SVCurrentCompany
+	
+	ShowLicNo						:	$ShowLicNo:Company:##SVCurrentCompany
+	PesticideLicNo 					: 	$PesticideLicNo:Company:##SVCurrentCompany
+	FertilizerLicNo 				: 	$FertilizerLicNo:Company:##SVCurrentCompany
+	SeedLicNo						: 	$SeedLicNo:Company:##SVCurrentCompany
+	
+	ShowPrevBal						:	$ShowPrevBal:Company:##SVCurrentCompany
+	
+	ContactPerson					:	$ContactPerson:Company:##SVCurrentCompany
+
+
+;; © Saurabh Chaure
+;;; End of File

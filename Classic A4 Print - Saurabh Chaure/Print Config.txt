@@ -1,0 +1,235 @@
+;; Add Button to Print Menu and TDL Configuration
+
+;; Add Button to Print Menu
+[#Form: DSP Print RightButtons Template]
+	
+	Add	: Top Button	: Print A5
+
+
+
+;; Add Button to TDL Configuration
+[#Part: CMP TallyShopFeatures Left]
+	Line			: Print A5 Enable, Show HSN Column, Show Company Column, + 
+						Show Batch Column, Show MFG Column, Show Exp Column, Show QTY Column, +
+						Show GSTR Column, Show InclRate Column, +
+						ShowLicNo, Pesticide Lic No, Fertilizer Lic No, Seed Lic No, +
+						ShowPrevBal, +
+						ContactPerson
+
+
+;; Button Defination
+[Button	: Print A5]
+	
+	Title	: "Print Configuration"
+	Key		: F12
+	Action	: Alter	: Print A5 Config
+
+
+;; Report Defination
+[Report	: Print A5 Config]
+	
+	Title	: "Print Configuration"
+	Form	: Print A5 Config
+	Object	: Company
+	
+[Form	: Print A5 Config]
+	
+	Part		: Print A5 ConfigT, Print Config Body
+	
+	Width		: 75% Screen
+	Height		: 75% Screen
+	Background	: FormBG
+	
+[Part	: Print Config Body]
+	Left Part	: Print Config Left part
+	;Right Part	: Print Config Right Part
+	Scroll		: Vertical
+	Space Left		: 1% Screen
+	Space Right		: 1% Screen
+	Space Bottom	: 1% Screen
+	
+[Part	: Print Config Left part]
+	
+;	Lines	: Print A5 Enable, Show HSN Column, Show Company Column, + 
+;					Show Batch Column, Show MFG Column, Show Exp Column, Show QTY Column, +
+;					Show InclRate Column, + ;Show GSTR Column, +
+;					ShowLicNo, Pesticide Lic No, Fertilizer Lic No, Seed Lic No, +
+;					ShowPrevBal, +
+;					ContactPerson
+	Lines	: Print A5 Enable, Show HSN Column, Show Company Column, + 
+					Show Batch Column, Show Exp Column, Show QTY Column, +
+					Show InclRate Column, Show GSTR Column, +
+					ShowLicNo, Pesticide Lic No, Fertilizer Lic No, Seed Lic No
+	
+;[Part	: Print Config Right part]
+;	
+;	Line	: Show GSTR Column
+	
+	
+[Part	: Print A5 ConfigT]
+	
+	Line			: Print A5 Config Title
+						
+	Space Left		: 1% Screen
+	Space Top		: 1% Screen
+	Space Right		: 1% Screen
+	Space Bottom	: 1% Screen
+	
+
+
+
+;; System UDF
+[System	: UDF]
+	
+	Enable Print A5 		: Logical	: 100
+	Show HSN Column			: Logical	: 101
+	Show Company Column		: Logical	: 102
+	Show Batch Column		: Logical	: 103
+	Show MFG Column			: Logical	: 104
+	Show Exp Column			: Logical	: 105
+	Show QTY Column			: Logical	: 106
+	Show GSTR Column		: Logical	: 107
+	Show IRte Column		: Logical	: 108
+	Pesticide Lic No 		: String	: 109
+	Fertilizer Lic No 		: String	: 110
+	Seed Lic No				: String	: 111
+	ShowLicNo				: Logical	: 112
+	ShowPrevBal				: Logical	: 113
+	ContactPerson			: String	: 114
+	
+
+
+;; Lines for Config
+[Line	: Print A5 Config Title]
+
+	Field			: Name Field
+	Space Bottom	: 2
+	
+	Local	: Field	: Name Field 	: Info			: "Print Configuration"
+	Local	: Field	: Name Field 	: Full Width	: Yes
+	Local	: Field	: Name Field	: Style			: Small Bold
+	Local	: Field	: Name Field 	: Border		: Thin Bottom
+	
+	
+[Line	: Print A5 Enable]
+	
+	Field		: Medium Prompt, Logical Field
+
+	Local		: Field	: Medium Prompt : Info		: "Enable Print"
+	Local		: Field	: Logical Field	: Storage	: Enable Print A5
+	Space Bottom	: 1
+	
+[Line	: Show HSN Column]
+	
+	Field		: Medium Prompt, Logical Field
+
+	Local		: Field	: Medium Prompt : Info		: "Show HSN Column"
+	Local		: Field	: Logical Field	: Storage	: Show HSN Column
+	
+[Line	: Show Company Column]
+	
+	Field		: Medium Prompt, Logical Field
+
+	Local		: Field	: Medium Prompt : Info		: "Show Company Column"
+	Local		: Field	: Logical Field	: Storage	: Show Company Column
+	
+[Line	: Show Batch Column]
+	
+	Field		: Medium Prompt, Logical Field
+
+	Local		: Field	: Medium Prompt : Info		: "Show Batch Column"
+	Local		: Field	: Logical Field	: Storage	: Show Batch Column
+	
+[Line	: Show MFG Column]
+	
+	Field		: Medium Prompt, Logical Field
+
+	Local		: Field	: Medium Prompt : Info		: "Show Mfg Date Column"
+	Local		: Field	: Logical Field	: Storage	: Show MFG Column
+	
+[Line	: Show Exp Column]
+	
+	Field		: Medium Prompt, Logical Field
+
+	Local		: Field	: Medium Prompt : Info		: "Show Exp Date Column"
+	Local		: Field	: Logical Field	: Storage	: Show Exp Column
+	
+[Line	: Show QTY Column]
+	
+	Field		: Medium Prompt, Logical Field
+
+	Local		: Field	: Medium Prompt : Info		: "Show Qty Column"
+	Local		: Field	: Logical Field	: Storage	: Show QTY Column
+	
+[Line	: Show GSTR Column]
+	
+	Field		: Medium Prompt, Logical Field
+
+	Local		: Field	: Medium Prompt : Info		: "Show GST Rate Column"
+	Local		: Field	: Logical Field	: Storage	: Show GSTR Column
+
+
+[Line	: Show InclRate Column]
+	
+	Field		: Medium Prompt, Logical Field
+	
+	Space Bottom	: 1
+
+	Local		: Field	: Medium Prompt : Info		: "Show Incl. Rate Column"
+	Local		: Field	: Logical Field	: Storage	: Show IRte Column
+	
+
+;; License number
+
+[Line	: ShowLicNo]
+	
+	Field		: Medium Prompt, Logical Field
+
+	Local		: Field	: Medium Prompt : Info		: "Show License No"
+	Local		: Field	: Logical Field	: Storage	: ShowLicNo
+
+[Line	: Pesticide Lic No]
+	
+	Field		: Medium Prompt, Name Field
+
+	Local		: Field	: Medium Prompt : Info		: "LAFD Lic No"
+	Local		: Field	: Name Field	: Storage	: Pesticide Lic No
+	Local		: Field	: Name Field	: Inactive	: Not @@ShowLicNo
+	
+[Line	: Fertilizer Lic No]
+	
+	Field		: Medium Prompt, Name Field
+
+	Local		: Field	: Medium Prompt : Info		: "LAID Lic No"
+	Local		: Field	: Name Field	: Storage	: Fertilizer Lic No
+	Local		: Field	: Name Field	: Inactive	: Not @@ShowLicNo
+	
+[Line	: Seed Lic No]
+	
+	Field		: Medium Prompt, Name Field
+
+	Local		: Field	: Medium Prompt : Info		: "LASD Lic No"
+	Local		: Field	: Name Field	: Storage	: Seed Lic No
+	Local		: Field	: Name Field	: Inactive	: Not @@ShowLicNo
+	Space Bottom	: 1
+	
+[Line	: ShowPrevBal]
+	
+	Field		: Medium Prompt, Logical Field
+
+	Local		: Field	: Medium Prompt : Info		: "Show Previous balance"
+	Local		: Field	: Logical Field	: Storage	: ShowPrevBal
+	Space Bottom	: 1
+	
+
+[Line	: ContactPerson]
+	
+	Field		: Medium Prompt, Name Field
+
+	Local		: Field	: Medium Prompt : Info		: "Contact Person"
+	Local		: Field	: Name Field	: Storage	: ContactPerson
+	Space Bottom	: 1
+
+
+;; © Saurabh Chaure
+;; End of File

@@ -1,0 +1,106 @@
+;; Invoice Details
+
+[Part: Classic Details]
+	Parts       : EXPINV AccInfo
+	CommonBorder: Yes
+	Vertical    : Yes
+	Scroll      : Vertical
+	Float       : No
+	Border      : Thin Left Right
+	Total       : EXPINV Amount
+	
+	; The below part is having Empty Inventory Entries part added AT BEGINNING, it is not recommended to change the optional part sequence.
+	Option		: EXPInv AccTitleInfo			: IF @@IsVChGVATApplicable Then @@IsTitlePartAllowed AND NOT ##vIsPrintedInvoiceArabic Else @@IsTitlePartAllowed
+	
+	; The below part is having Inventory Entries part added AT BEGINNING, it is not recommended to change the optional part sequence.
+	Option		: ExpInvInventoryInfo			: NOT ($$IsEmpty:$InventoryEntries[1].StockItemName OR $$IsEndOfList:$InventoryEntries[1].StockItemName)
+	
+	 
+	
+	Local		: Part	: EXPINV InvInfo 		: Delete	: Line: EXPINV InvSubTotal
+	Local		: Line	: EXPINV AccDetails 	: Add		: Border	: Thin Bottom
+	Local		: Line	: EXPINV AccDetails 	: Delete	: Right Fields	: EXPINV AccRatePer, EXPINV AccHSNSACDetails, EXPINV IGSTRate
+	Local		: Line	: EXPINV AccDetails 	: Add		: Right Fields	: At Beginning	: EXPINV AccHSNSACDetails, Classic CompanyName, EXPINV IGSTRate, Classic Batch
+	Local		: Line	: EXPINV AccDetails 	: Add		: Right Fields	: Before: EXPINV AccAmount : Classic Expiry
+	Local		: Line	: EXPINV AccDetails 	: Add		: Space Top		: 0.1
+	Local		: Line	: EXPINV AccDetails 	: Add		: Space Bottom	: 0.1
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV SLNoTitle			: Width 	: 2
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV AccHSNSACDetails	: Width 	: @@ClassicColumnWidth
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : Classic CompanyName		: Width 	: @@ClassicColumnWidth + 1
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : Classic Batch				: Width 	: @@ClassicColumnWidth
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : Classic Expiry			: Width 	: @@ClassicColumnWidth
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV IGSTRate			: Width 	: @@ClassicColumnWidth - 2
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV RateInclTitle		: Width 	: @@ClassicColumnWidth
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV AccRate			: Width 	: @@ClassicColumnWidth 
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV AccRatePer			: Width 	: @@ClassicColumnWidth 
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV AccDiscount		: Width 	: @@ClassicColumnWidth - 2
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV AccAmount			: Width 	: 10
+	
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV AccHSNSACDetails	: Invisible 	: Not @@ShowHSNCol
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : Classic CompanyName		: Invisible 	: Not @@ShowComCol
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : Classic Batch				: Invisible 	: Not @@ShowBatCol
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : Classic Expiry			: Invisible 	: Not @@ShowExpCol
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV IGSTRate			: Invisible 	: Not @@ShowGRtCol
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV AccQty				: Invisible 	: Not @@ShowQtyCol
+	Local		: Line	: EXPINV AccDetails 	: Local 	: Field : EXPINV RateInclTitle		: Invisible 	: Not @@ShowIRtCol
+	
+	
+	Local		: Line	: EXPINV InvDetails 	: Add		: Border	: Thin Bottom
+	Local		: Line	: EXPINV InvDetails 	: Delete	: Explode	: EXPINV BatchDetails
+	Local		: Line	: EXPINV InvDetails 	: Delete	: Right Fields	: EXPINV RatePer, EXPINV HSNSACDetails, EXPINV IGSTRate
+	Local		: Line	: EXPINV InvDetails 	: Add		: Right Fields	: At Beginning	: EXPINV HSNSACDetails, Classic CompanyName,  EXPINV IGSTRate, Classic Batch
+	Local		: Line	: EXPINV InvDetails 	: Add		: Right Fields	: Before: EXPINV Amount : Classic Expiry
+	Local		: Line	: EXPINV InvDetails 	: Add		: Space Top		: 0.1
+	Local		: Line	: EXPINV InvDetails 	: Add		: Space Bottom	: 0.1
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV SLNo			: Width 	: 2
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV HSNSACDetails	: Width 	: @@ClassicColumnWidth
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : Classic CompanyName	: Width 	: @@ClassicColumnWidth + 1
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : Classic Batch			: Width 	: @@ClassicColumnWidth
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : Classic Expiry		: Width 	: @@ClassicColumnWidth
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV IGSTRate		: Width 	: @@ClassicColumnWidth - 2
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV RateIncl		: Width 	: @@ClassicColumnWidth
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV Rate			: Width 	: @@ClassicColumnWidth
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV RatePer		: Width 	: @@ClassicColumnWidth 
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV Discount		: Width 	: @@ClassicColumnWidth - 2
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV Amount			: Width 	: 10
+	
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV HSNSACDetails	: Invisible 	: Not @@ShowHSNCol
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : Classic CompanyName	: Invisible 	: Not @@ShowComCol
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : Classic Batch			: Invisible 	: Not @@ShowBatCol
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : Classic Expiry		: Invisible 	: Not @@ShowExpCol
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV IGSTRate		: Invisible 	: Not @@ShowGRtCol
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV Qty			: Invisible 	: Not @@ShowQtyCol
+	Local		: Line	: EXPINV InvDetails 	: Local 	: Field : EXPINV RateIncl		: Invisible 	: Not @@ShowIRtCol
+	
+	
+
+
+	[Field: Classic CompanyName]
+		Use         : Simple Field
+		Info        : $Category:StockItem:$StockItemName
+		Align       : Centre
+		Style       : Small
+		Width       : @@ClassicColumnWidth
+		Invisible   : No
+		Border		: thin left
+		
+	[Field: Classic Batch]
+		Use         : Simple Field
+		Align       : Centre
+		Style       : Small
+		Width       : @@ClassicColumnWidth
+		Invisible   : No
+		Border		: thin left
+		Storage     : Batch Name
+		
+	[Field: Classic Expiry]
+		Use         : Due Date Field
+		Storage     : Expiry Period
+		Align       : Centre
+		Style       : Small
+		Width       : @@ClassicColumnWidth
+		Invisible   : No
+		Border		: thin left
+
+;; © Saurabh Chaure
+;; End of the File

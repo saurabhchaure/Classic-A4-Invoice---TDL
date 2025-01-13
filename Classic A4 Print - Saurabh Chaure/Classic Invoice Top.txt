@@ -1,0 +1,292 @@
+;; Logic for Invoice Top
+
+[Part	: Classic OpPageBreak]
+	
+	Parts       : Classic Title, Classic Leading, Classic License, Classic Column
+	Vertical	: Yes
+	
+	
+	[Part: Classic Title]
+		Add	: Parts	: Classic Logo, Classic Title Info Top
+		Border		: thin top left right
+		
+		[Part: Classic Title Info Top]
+			Line        : DSP VoucherTime, EXPINV Title, EXPINV ExcTitle, EXPINV GSTNumber
+			Preprinted  : No 
+
+			Option 		: EXPINV PJBExcTitle	: @@IsPrintCopyApplicable AND $IsTaxInvoice:VoucherType:$VoucherTypeName AND ((@@PunjabState OR @@ChandigarhState) AND @@IsVCHContainsVATLd)
+			Option 		: EXPINV ASMExcTitle 	: @@IsPrintCopyApplicable AND $IsTaxInvoice:VoucherType:$VoucherTypeName AND @@AssamState
+			Option 		: EXPINV JKExcTitle  	: @@IsPrintCopyApplicable AND $IsTaxInvoice:VoucherType:$VoucherTypeName AND @@JKLadakhState
+			Option 		: EXPINV HPExeTitle		: @@IsIndianVAT AND @@IsPrintCopyApplicable AND $IsTaxInvoice:VoucherType:$VoucherTypeName AND @@HPState
+				
+			Option  	: EXPINV GSTExportTitle : @@IsGSTOnAndAppl
+			Width		: If @@IsLogoEnabled Or @@IsPrintEnabled then 70% else 100% Page
+			
+
+		[Part: Classic Logo]
+				
+				Lines		: EXPINV Logo
+				Graph Type	: ##SALogoPath
+				Height		: 0.4 Inch
+				Width		: 15% Page
+				Invisible	: If $$InPrintMode OR $$InMailAction OR $$InWhatsAppAction OR ($$InExportMode And $$IsSysNameEqual:HTML:##SVExportFormat) then No Else Yes
+
+		
+
+	
+	
+	[Part	: Classic Leading]
+		
+		Left Part	: Classic TopLeft
+		Right Part	: Classic TopRight
+		Vertical    : No
+		Border      : Thin Box
+
+		
+		[Part: Classic TopLeft]
+				Part      	: Classic SaleTopLeft
+				Border    	: Thin Right
+				Vertical  	: Yes
+				Local 		: Part	: Default 			: +
+				Local 		: Field : EXPINV SubTitle 	: Width 	: 50% Page
+				
+			[!Part: Classic SaleTopLeft]
+				Parts 		: EXPINV Company
+				Local		: Field	: EXPINV Company 	: Width			: 50% Page
+				Local		: Field	: EXPINV Address 	: Full Width	: Yes
+							   
+		[Part: Classic TopRight]
+			Parts 		: Classic BasicInfo, EXPINV Buyer, EXPINV Contact
+			Vertical    : Yes
+			Local		: Field	: EXPINV Buyer 	: Delete	: Border
+			
+			[Part: Classic BasicInfo]
+
+				Parts       : Classic BasicLeft, Classic BasicRight
+				Vertical    : No
+				Option		: GVAT EXPINV BasicInfoArabic		: ##vIsPrintedInvoiceArabic
+				
+				[Part: Classic BasicLeft]
+
+					Parts       : Classic Number, Classic ShipDoc
+					Vertical    : Yes
+					Border      : Thin Right
+					
+						[Part: Classic Number]
+							Line    	: Classic Number
+							Border		: thin bottom
+							
+							[Line: Classic Number]
+								Field		: Medium Prompt,Name Field
+								Local		: Field : Medium Prompt	: Set As	: @@INVNumTitle
+								Local		: Field	: Medium Prompt	: Style		: Small		
+								Local		: Field	: Medium Prompt	: Width		: 12% page
+								Local		: Field : Medium Prompt	: Cells  	: ($$Quotient:@@ExcelCellColumn:4)
+								Local		: Field : Name Field 	: Set as 	: $VoucherNumber
+								Local   	: Field : Name Field 	: Style  	: Normal Bold
+								Local		: Field	: Name Field	: Width		: 13% page
+								Local   	: Field : Name Field 	: Cells  	: ($$Quotient:@@ExcelCellColumn:4)
+							
+						[Part: Classic ShipDoc]
+							Line    	: Classic ShipDoc
+							Border		: thin bottom
+							
+							[Line: Classic ShipDoc]
+								Field		: Medium Prompt,Name Field
+								Local		: Field : Medium Prompt	: Set As	: "DC No.:"
+								Local		: Field	: Medium Prompt	: Style		: Small
+								Local		: Field	: Medium Prompt	: Width		: 12% page
+								Local		: Field : Medium Prompt	: Cells  	: ($$Quotient:@@ExcelCellColumn:4)
+								Local		: Field : Name Field 	: Set as 	: $BasicShipDocumentNo
+								Local   	: Field : Name Field 	: Style  	: Normal Bold
+								Local		: Field	: Name Field	: Width		: 13% page
+								Local   	: Field : Name Field 	: Cells  	: ($$Quotient:@@ExcelCellColumn:4)    
+
+
+					
+				[Part: Classic BasicRight]
+
+					Parts       : Classic Date, Classic PreCarr
+					Vertical    : Yes
+					
+					[Part: Classic Date]
+						Line    	: Classic Date
+						Border		: thin bottom
+						
+						[Line: Classic Date]
+							Field		: Medium Prompt,Name Field
+							Local		: Field : Medium Prompt	: Set As	: "Dated :"
+							Local		: Field	: Medium Prompt	: Style		: Small		
+							Local		: Field	: Medium Prompt	: Width		: 12% page
+							Local		: Field : Medium Prompt	: Cells  	: ($$Quotient:@@ExcelCellColumn:4)
+							Local		: Field : Name Field 	: Set as 	: $$String:$Date:UniversalDate
+							Local   	: Field : Name Field 	: Style  	: Normal Bold
+							Local		: Field	: Name Field	: Width		: 13% page
+							Local   	: Field : Name Field 	: Cells  	: ($$Quotient:@@ExcelCellColumn:4)
+						
+					[Part: Classic PreCarr]
+						Line    	: Classic PreCarr
+						Border		: thin bottom
+						
+						[Line: Classic PreCarr]
+							Field		: Medium Prompt,Name Field
+							Local		: Field : Medium Prompt	: Set As	: "Thru.:"
+							Local		: Field	: Medium Prompt	: Style		: Small		
+							Local		: Field	: Medium Prompt	: Width		: 12% page
+							Local		: Field : Medium Prompt	: Cells  	: ($$Quotient:@@ExcelCellColumn:4)
+							Local		: Field : Name Field 	: Set as 	: $BasicShippedBy
+							Local   	: Field : Name Field 	: Style  	: Normal Bold
+							Local		: Field	: Name Field	: Width		: 13% page
+							Local   	: Field : Name Field 	: Cells  	: ($$Quotient:@@ExcelCellColumn:4)
+						
+
+
+	[Part: Classic License]
+		Vertical    	: No
+		Border      	: Thin left right
+		Lines			: Classic License
+		Invisible		: Not @@ShowLicNo
+		Vertical Align	: Center
+		Height			: 1.2
+		Common Borders	: Yes
+		
+		
+		[Line: Classic License]
+				Field			: Classic LAFD, Classic LAID, Classic LASD
+				
+			[Field: Classic LAFD]
+					Fields		: Short Prompt, Simple Field
+					Full Width	: True
+					Local		: Field	: Short Prompt	: Set as	: "LAFD"
+					Local		: Field	: Short Prompt	: Style		: Small 
+					Local		: Field	: Simple Field	: Set as	: @@PesticideLicNo
+					Local		: Field	: Simple Field	: Style		: Small
+					Border		: Thin Right
+					
+			[Field: Classic LAID]
+					Fields		: Short Prompt, Simple Field
+					Local		: Field	: Short Prompt	: Set as	: "LAID"
+					Local		: Field	: Short Prompt	: Style		: Small
+					Local		: Field	: Simple Field	: Set as	: @@FertilizerLicNo
+					Local		: Field	: Simple Field	: Style		: Small
+					Full Width	: True
+					Border		: Thin Right
+					
+			[Field: Classic LASD]
+					Fields		: Short Prompt, Simple Field
+					Local		: Field	: Short Prompt	: Set as	: "LASD"
+					Local		: Field	: Short Prompt	: Style		: Small
+					Local		: Field	: Simple Field	: Set as	: @@SeedLicNo
+					Local		: Field	: Simple Field	: Style		: Small
+					Full Width	: True
+		
+
+		
+
+		
+
+
+	[Part: Classic Column]	
+		Line      		: Classic Column1
+		Local       	: Field : Default : PrePrinted : Yes
+		SpaceBottom 	: 0
+		CommonBorder	: Yes
+		Border      	: Thin Left Right
+		Print BG		: Light Grey
+		
+		[Line: Classic Column1]
+			Left Fields 	: EXPINV SLNoTitle, EXPINV MarksTitle1, EXPINV PackagesTitle1, EXPINV DescTitle
+		;	Right Fields : EXPINV PartNoTitle, EXPINV MRPTitle, EXPINV VATPercTitle, EXPINV DueTitle, EXPINV QtyTitle, EXPINV RateInclTitle, EXPINV RateTitle, EXPINV RatePerTitle, EXPINV DiscTitle, EXPINV AmountTitle
+			Right Fields 	: EXPINV HSNSACTitle, Classic CompanyTitle,EXPINV IGSTRateTitle, Classic BatchTitle,   EXPINV QtyTitle, EXPINV RateInclTitle, EXPINV RateTitle,  EXPINV DiscTitle, Classic ExpiryTitle, EXPINV AmountTitle
+			
+			Border 			: Column Top Border
+			Space Top		: 0.1
+			Space Bottom	: 0.1
+			
+			
+			Local : Field : EXPINV SLNoTitle		: Width 	: 2
+			Local : Field : EXPINV HSNSACTitle 		: Width 	: @@ClassicColumnWidth
+			Local : Field : EXPINV IGSTRateTitle	: Width 	: @@ClassicColumnWidth - 2
+			Local : Field : Classic CompanyTitle	: Width 	: @@ClassicColumnWidth + 1
+			Local : Field : EXPINV BatchTitle		: Width 	: @@ClassicColumnWidth
+			Local : Field : EXPINV ExpiryTitle		: Width 	: @@ClassicColumnWidth
+			Local : Field : EXPINV RateInclTitle	: Width 	: @@ClassicColumnWidth
+			Local : Field : EXPINV RateTitle		: Width 	: @@ClassicColumnWidth
+			Local : Field : EXPINV DiscTitle		: Width 	: @@ClassicColumnWidth - 2
+			Local : Field : EXPINV AmountTitle		: Width 	: 10
+			
+			Local : Field : EXPINV SLNoTitle		: Style 	: Small Bold
+			Local : Field : EXPINV DescTitle		: Style 	: Small Bold
+			Local : Field : EXPINV HSNSACTitle 		: Style 	: Small Bold
+			Local : Field : EXPINV IGSTRateTitle 	: Style 	: Small Bold
+			Local : Field : Classic CompanyTitle	: Style 	: Small Bold
+			Local : Field : Classic BatchTitle		: Style 	: Small Bold
+			Local : Field : Classic ExpiryTitle		: Style 	: Small Bold
+			Local : Field : EXPINV QtyTitle			: Style 	: Small Bold
+			Local : Field : EXPINV RateInclTitle	: Style 	: Small Bold
+			Local : Field : EXPINV RateTitle		: Style 	: Small Bold
+			Local : Field : EXPINV DiscTitle		: Style 	: Small Bold
+			Local : Field : EXPINV AmountTitle		: Style 	: Small Bold
+			
+			Local : Field : EXPINV HSNSACTitle 		: Invisible 	: Not @@ShowHSNCol
+			Local : Field : EXPINV IGSTRateTitle 	: Invisible 	: Not @@ShowGRtCol
+			Local : Field : Classic CompanyTitle	: Invisible 	: Not @@ShowComCol
+			Local : Field : Classic BatchTitle		: Invisible 	: Not @@ShowBatCol
+			Local : Field : Classic ExpiryTitle		: Invisible 	: Not @@ShowExpCol
+			Local : Field : EXPINV QtyTitle			: Invisible 	: Not @@ShowQtyCol
+			Local : Field : EXPINV RateInclTitle	: Invisible 	: Not @@ShowIRtCol
+			
+
+			Local : Field : EXPINV QtyTitle			: Border : thin left
+			Local : Field : Classic CompanyTitle	: Border : thin left
+			Local : Field : Classic BatchTitle		: Border : thin left
+			Local : Field : Classic ExpiryTitle		: Border : thin left
+
+			Local : Field : EXPINV SLNoTitle  		: Set as : $$LocaleString:"Sl No."
+			Local : Field : EXPINV MRPTitle  		: Set as : $$LocaleString:"MRP" + "/"
+			Local : Field : EXPINV RateInclTitle	: Info	 : $$StringWord:1:$$LocaleString:"N.Rate" 
+			Local : Field : EXPINV RateTitle      	: Info   : $$LocaleString:"Rate"
+			Local : Field : EXPINV RatePerTitle   	: Info   : $$LocaleString:"per"
+			Local : Field : EXPINV AmountTitle    	: Info   : $$LocaleString:"Amount"
+			Local : Field : EXPINV DescTitle  		: Set as :	If @@AcctsInvoice AND $IsInvoice then $$LocaleString:"Particulars" Else @@GSTTypeOfSupplyGoodsPrint
+			
+			Local : Field : EXPINV QtyTitle  		: Width  : If @@IsJobWorkVouchers Then @@QtyWidth Else If (@@InvWithActQty AND $$InPixelMode) Then (@@QtyWidth + @@QtyWidth + .9) Else @@QtyWidth
+
+;			Options : EXPINVAlt Column1 			: (@@InvWithQty AND NOT $$IsEmpty:$StockItemName AND $IsAltunits And @@AltUnitasCol)
+;			Options : DealerDNoteInv Column1  		: @@IsExciseDealerOn AND @@IsDebitNote AND @@IsTraderInvoice AND ##PUDealerExciseDutyInfo
+;			Options : GJVAT HSNCodeTitle 			: @@IsVATTaxInvoiceOfVCHType AND @@GujaratState AND ##SAGJVATHSNCode AND @@IsIndian
+;;			Options : EXPINV Column1HSN    			: @@IsGSTOnAppl
+;			options : EXPINV column1gccanalysis 	: @@isgvatnonblankvch
+;			options : EXPINV column1arabic  		: ##visprintedinvoicearabic
+;			options : EXPINV vatgcc column1title	: @@isvchgvatapplicable and ##visprintedinvoicearabic
+		
+				[Border	: Column Top Border]
+					Top		: Thin, Double Lined
+					Bottom	: Thin, Double Lined
+
+				[Field: Classic CompanyTitle]
+					Use         : Simple Field
+					Info        : $$LocaleString:"Company"
+					Align       : Centre
+					Style       : Small
+					Width       : @@ClassicColumnWidth
+					Invisible   : No
+
+				[Field	: Classic BatchTitle]
+					Use         : Simple Field
+					Info        : $$LocaleString:"Batch"
+					Align       : Centre
+					Style       : Small
+					Width       : @@ClassicColumnWidth
+					Invisible   : No
+
+				[Field	: Classic ExpiryTitle]
+					Use         : Simple Field
+					Info        : $$LocaleString:"Expiry"
+					Align       : Centre
+					Style       : Small
+					Width       : @@ClassicColumnWidth
+					Invisible   : No
+
+;; © Saurabh Chaure
+;; End of the File

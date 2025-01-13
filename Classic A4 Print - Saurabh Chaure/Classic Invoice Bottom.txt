@@ -1,0 +1,312 @@
+[Part: Classic Totals]
+	Lines       : Classic Totals
+	Border      : Thin Box
+	
+
+[Line: Classic Totals]
+
+	Left Fields 	: EXPINV SLNoTitle, EXPINV DescTitle
+	Right Fields 	: EXPINV HSNSACTotal, Classic CompanyTotal, EXPINV IGSTRateTitle, Classic BatchTotal,  EXPINV AccDueOn, +
+					  EXPINV ActualQtyTotal, EXPINV RateInclTitle, EXPINV RateTotal, EXPINV DiscTotal, Classic ExpiryTotal, EXPINV Total
+	
+	Local : Field : EXPINV DescTitle      	: Set as      	: $$LocaleString:"Total"
+	Local : Field : EXPINV DescTitle      	: Align       	: Right
+	Local : Field : EXPINV IGSTRateTitle	: Info      	: $$LocaleString:""
+	
+	Local : Field : EXPINV SLNoTitle		: Width 		: 2
+	Local : Field : EXPINV HSNSACTotal		: Width 		: @@ClassicColumnWidth
+	Local : Field : EXPINV IGSTRateTitle	: Width 		: @@ClassicColumnWidth - 2
+	Local : Field : Classic CompanyTotal	: Width 		: @@ClassicColumnWidth + 1
+	Local : Field : Classic BatchTotal		: Width 		: @@ClassicColumnWidth
+	Local : Field : Classic ExpiryTotal		: Width 		: @@ClassicColumnWidth
+	Local : Field : EXPINV AccDueOn			: Width 		: @@ClassicColumnWidth
+	Local : Field : EXPINV RateInclTitle	: Width 		: @@ClassicColumnWidth
+	Local : Field : EXPINV RateTotal		: Width 		: @@ClassicColumnWidth
+	Local : Field : EXPINV DiscTotal		: Width 		: @@ClassicColumnWidth - 2
+	Local : Field : EXPINV Total			: Width 		: 10
+	
+	Local : Field : EXPINV HSNSACTotal		: Invisible		: Not @@ShowHSNCol
+	Local : Field : EXPINV IGSTRateTitle	: Invisible		: Not @@ShowGRtCol
+	Local : Field : Classic CompanyTotal	: Invisible		: Not @@ShowComCol
+	Local : Field : Classic BatchTotal		: Invisible		: Not @@ShowBatCol
+	Local : Field : Classic ExpiryTotal		: Invisible		: Not @@ShowExpCol
+	Local : Field : EXPINV ActualQtyTotal	: Invisible		: Not @@ShowQtyCol
+	Local : Field : EXPINV RateInclTitle	: Invisible		: Not @@ShowIRtCol
+	
+	
+	
+	
+	
+	[Field: Classic CompanyTotal]
+		Use         : Classic Field
+		Border		: thin left
+	
+	[Field: Classic BatchTotal]
+		Use         : Classic Field
+		Border		: thin left
+		
+	[Field: Classic ExpiryTotal]
+		Use         : Classic Field
+		Border		: thin left
+		
+		[Field: Classic Field]
+			Width       : @@ClassicColumnWidth
+			Align       : Left
+			Skip        : Yes
+			Fixed       : Yes
+	
+
+
+[Part: Classic AmountInWords]
+	Line	: Classic AmountInWords
+	Border	: Thin Left Right Bottom
+;	Width	: 100% Page
+	
+	[Line: Classic AmountInWords]
+		Use         : EXPINV SubTitle
+		Fields		: EXPINV SubTitle, Classic AmountInWords
+		SpaceTop    : 0.25
+        SpaceBottom : 0.25
+		Local		: Field	: EXPINV SubTitle 	: Set as		: $$LocaleString:"Amount Chargeable (in words):"
+		
+		[Field: Classic AmountInWords]
+
+			Max         : @@MaxNarrWidth
+			Set as      : $$SPrintf:@@AmtOnlyFormat:@ForexFormula + (If @@ShowAmtInDigits Then " (" + $$String:#EXPINVTotal:"NoSymbol" + ")" Else "")
+			ForexFormula: If @@ShowAmtInDigits Then $$InDigits:#EXPINVTotal:"Forex" Else $$InWords:#EXPINVTotal:"Forex"
+			ValueInWords: $$InWords:#EXPINVTotal
+			Style       : Normal Bold
+			Lines       : 0
+			FullWidth   : Yes
+			Inactive    : $$IsEmpty:#EXPINVTotal
+			Invisible   : NOT @@InvWithAmt
+			Cells       : 6 * ($$Quotient:@@ExcelCellColumn:8)
+			UILanguage  : if @@IsGCCCountries then @@EnglishLanguageId else ##SVCurrentUILanguageId       
+
+
+	
+
+[Part: Classic SignOff]
+	Left Part	: Left Signoff
+	Right Part	: Right SignOff
+	Border		: Thin Left Right Bottom
+;	Width		: 100% Page
+	Height		: 1.5 inch
+	
+
+
+
+	[Part: Left Signoff]
+		Left Part	: QrCode
+	
+	
+		[Part:	QrCode]
+			
+			QR Code				: @QrCodeValue: No
+			Width				: 21% Page
+			Height				: 1.5 inch
+			Line				: QrCode
+			Horizontal Align	: Left
+			Vertical Alignment	: Center
+			Space Bottom		: 1 mm
+			Space Left			: 1 mm
+			Space Top			: 1 mm
+			Space Right			: 1 mm
+			
+			QR code Value		: "upi://pay?pa=" + @UPINumber + "&pn=" + @PayeeName + "&am=" + @AmountToPay +"&tn=" + @PaymentNote + "&Cu=INR"
+			UPI Number			: $$LocaleString:"shrisaikrushiudyogsamuh@icici"
+			Payee Name			: $$LocaleString:@@CmpMailName
+			Amount To Pay		: $$LocaleString:@AmountToNumber
+			Payment Note		: $$LocaleString:"Inovice No:%" + $$LocaleString:$VoucherNumber + ",%" + "Date:%" + $$String:$Date:UniversalDate + ",%" + "Note:%" + $$String:$Narration
+			Bank Account Number	: $$LocaleString:$BankDetails:Ledger:@@VchBankName + "@" + $$LocaleString:$IFSCode:Ledger:@@VchBankName + $$LocaleString:".ifsc.npci"
+			Amount To Number	: $$Number:$Amount
+			
+			[Line:	Qrcode]
+				
+				Field	: Simple Field		
+				Local	: Line	: Simple Field	: Set as		: "Qr Code"
+				Local	: Field	: Simple Field	: Full Width	: Yes
+			
+	[Part	: BankDetails Sign]
+		Part		: Bank Details
+		Vertical	: Yes
+	;	Height		: 1.5 inch
+		Width		: 50% Page
+
+	
+		[Part	: Bank Details]
+			Top Part	: BankInDetail
+			
+			[Part	: BankInDetail]
+				Top Lines		: BankInDetailT, BankInDetail Bank Name, BankInDetail Account No,BankInDetail IFSC , ScanQr
+				Scroll			: Vertical
+				Space Top		: 0.5
+				Space Left		: 1
+			;	Print BG	: red
+				Width			: 50% Page
+				
+				[Line	: ScanQr]
+						Field	: Name Field
+						local	: Field	: Name Field 	: Set as	: "Scan QR Code to Pay!"
+						Local   : Style : Default 		: Italic 	: Yes
+						Space Top	: 0.5
+					
+				[Line	: BankInDetailT]
+					Field			: Simple Field
+					Local			: Field	: Simple Field	: Set as	: "Bank Details"
+					Local			: Field	: Simple Field	: Border	: thin Bottom
+					Local			: Field	: Simple Field	: Style		: Normal Bold
+					Space Bottom	: 0.5
+
+					
+				[Line	: BankInDetail Bank Name]
+					Field	: Short Prompt, Name Field
+					Local	: Field	: Short Prompt	: Set as	: $$LocaleString:"Bank Name:"
+					Local	: Field	: Name Field	: Set as	: If NOT $$IsEmpty:@@VchBankMailingName Then @@VchBankMailingName Else ##SABankName
+
+
+
+				[Line	: BankInDetail Account No]
+					Field	: Short Prompt, Name Field
+					Local	: Field	: Short Prompt	: Set as	: $$LocaleString:"A/C No:"
+					Local	: Field	: Name Field	: Set as	: $BankDetails:Ledger:@@VchBankName
+
+				[Line	: BankInDetail IFSC]
+					Field	: Short Prompt, Name Field
+					Local	: Field	: Short Prompt	: Set as	: $$LocaleString:"IFSC Code:"
+					Local	: Field	: Name Field	: Set as	: $IFSCode:Ledger:@@VchBankName
+	
+	[Part	: TermsAndCondition]
+		Line		: CustAccBalT
+		Scroll		: Vertical
+	;	Width		: 35% page
+	
+		[Line	: CustAccBalT]
+			Use	:	BankInDetailT
+			Field	: Simple Field
+			Local	: Field	: Simple Field	: Set as	: "Terms and Condition"
+			Invisible	: Yes
+		
+	
+
+[Part: Right Signoff]
+	Top Part	: Right Signoff Top
+	Bottom Part	: Right Signoff Bottom
+	Vertical	: Yes
+;	Width		: 70% page
+
+	[Part: Right Signoff Top]
+		Left Part	: BankDetails Sign
+		Right Part	: Top Right Signoff
+		
+		[Part: Top Right Signoff]
+			Lines		: Classsic PrevPartyOutstanding, Classsic CurPartyOutstanding, Classsic Net Balance
+			Space Right	: 1
+			Space Top	: 0.5
+			
+			[Line: Classsic Net Balance]
+
+				Right Field	: Short Prompt, Classsic PartyOutstanding
+				Space Top	: 0.2
+
+				Local	: Field	: Short Prompt				: Info		: $$LocaleString:"Net Bal"
+				Local	: Field	: Short Prompt				: Style		: Normal
+				Local	: Field	: Classsic PartyOutstanding	: Set as	: $$NettAmount:@PrevOutStanding:#EXPINVTotal
+				Border	: Totals Top
+
+				[Border: Totals Top]
+						Top    	: Normal, Double Lined, Full Length
+
+			[Line: Classsic PrevPartyOutstanding]
+
+				Right Field	: Short Prompt, Classsic PartyOutstanding
+				Space Top	: 0.2
+
+				Local	: Field	: Short Prompt	: Info	: $$LocaleString:"Prev Bal"
+				Local	: Field	: Short Prompt	: Style	: Normal
+
+			[Line: Classsic CurPartyOutstanding]
+
+				Use			: Classsic PrevPartyOutstanding
+				Space Top	: 0.1
+				Space Bottom: 0.15
+
+				Local	: Field	: Short Prompt				: Info		: $$LocaleString:"Curr Bal"
+				Local	: Field	: Classsic PartyOutstanding	: Set as	: #EXPINVInvTotal ;If $$IsEmpty:$$NettAmount:@InvValue:@AccValue Then "" Else If $$IsEmpty:#EXPINVInvTotal Then $$Total:EXPINVAmount Else #EXPINVInvTotal
+				
+				[Field: Classsic PartyOutstanding]
+
+					Use				: Amount Field
+					Set as			: @PrevOutStanding
+					PrevOutStanding : If ##SVInCreateMode OR (##vIsPrevVchOptional != $IsOptional) Then @@NettClosingBal Else $$AmountSubtract:@ClosingBalVal:#EXPINVTotal
+					ClosingBalVal 	: If $$IsEmpty:##vIsPrevVchAmount Then @@NettClosingBal Else $$NettAmount:@@NettClosingBal:@Amountdiff
+					Amountdiff		: #EXPINVTotal - ##vIsPrevVchAmount
+					CurrOutStanding	: $$AmountAdd:@PrevOutStanding:#EXPINVTotal
+					Format			:  "ShowBaseCurrency, DrCr"
+					Full Width		: Yes
+
+
+	[Part: Right Signoff Bottom]
+		Line		: Signs
+	;	Width		: 70% page
+
+			
+		[Part: Signs]
+			Bottom Line	: Signs
+			
+			[Line: Signs]
+				Right Field	: Customer Sign, Company Sign
+				
+				[Field	: Customer Sign]
+					Style			: small
+					Set as			: "Customer Signature"
+					Border			: thin top
+					Space Right		: 5
+					Align			: Center
+					
+				
+				[Field	: Company Sign]
+					Fields			: Simple Field, Colon Field, Name Field
+					Local	: Field	: Simple Field 	: Set as	: "For"
+					Local	: Field	: Name Field 	: Set as	: @@CmpMailName
+	;				Style			: small
+	;				Set as			: "For: " + @@CmpMailName
+					Border			: thin top
+	;				Space Right		: 5
+					Align			: Center
+
+
+;; Jurisdiction
+[Part	: Jurisdiction]
+	
+	Line	: Jurisdiction
+	Border		: thin left right bottom
+;	Width	: 100% Page
+
+	[Line	: Jurisdiction]
+		
+		Left Field		: Jurisdiction
+		Right Field		: ComputerGenPrint
+		Space Bottom	: 0.1
+		Space Top		: 0.1
+		
+		[Field	: Jurisdiction]
+
+			Set as     	: $$Upper:@JurisStr
+            JurisStr  	: $$SPrintf:@@SubjectToJurisdictionFormat:@@Jurisdiction
+			Style		: tiny
+			Space Left	: 1
+			Width		: 50% Page
+			
+		[Field	: ComputerGenPrint]
+			
+			Set as		: @@ComputerGen
+			Style		: tiny
+			Align		: Right
+			Space Right	: 1
+			Width		: 50% Page 
+
+
+;; © Saurabh Chaure
+;; End of the file
+		

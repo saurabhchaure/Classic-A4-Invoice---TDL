@@ -1,0 +1,9 @@
+;; This module consist the modification of all the default code
+
+;; TOP OF INVOICE
+[#Line: EXPINV Company]
+	Local   : Field : Name Field : Full Width  	: Yes
+	Local   : Field : Name Field : Width  		: If @@IsLogoEnabled And Not @@IsPrintEnabled Then 35% Else 50% Page
+
+;; © Saurabh Chaure
+;; End of the file

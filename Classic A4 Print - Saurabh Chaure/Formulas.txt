@@ -1,0 +1,31 @@
+;Global Settings
+[System: Formula]
+	ClassicColumnWidth		: 5
+	ComprehensiveInvoiceCondition	:	If (@@IsA5PrintEnabled OR @@KeralaInvForm8 OR @@KeralaInvForm8B OR @@KeralaInvForm8D OR (@@GujaratState AND (@@IsIndianRegularVAT AND ##PrintAsVATForm402)) OR (@@IsUAEVATOn AND @@ShowSupplCrNoteInPrn AND @@IsCreditNote)) Then No Else +
+										If @@IsExciseGoodsTransfer AND NOT ##SVExport Then (@@IsJobMaterialIssue AND (##DNMfgrCommercial OR $$IsEmpty:$ExciseRegistrationType:TaxUnit:@@ExciseMfgrInvUnitName OR @@VtypJobWorkEnabled) AND NOT @@InvSimple AND NOT ##JobWorkAnnexureIIPrint) Else +
+										NOT @@IsTraderExciseSalesDNUnit AND NOT @@IsExciseMfgrRule11Print AND NOT (@@IsJobOrderEnabled AND @@IsJobMaterialIssue) AND NOT ##SVExport AND NOT @@PurcAsVoucher AND ($$InPixelMode AND NOT @@InvSimple) 
+										
+	IsPrintEnabled				:	@@IsSales AND @@IsPrintA5EnableInConfig
+	
+	;; Print Configuration
+	IsPrintA5EnableInConfig			:	$EnablePrintA5:Company:##SVCurrentCompany
+	ShowHSNCol						:	$ShowHSNColumn:Company:##SVCurrentCompany
+	ShowComCol						:	$ShowCompanyColumn:Company:##SVCurrentCompany
+	ShowBatCol						:	$ShowBatchColumn:Company:##SVCurrentCompany
+	ShowMfgCol						:	$ShowMFGColumn:Company:##SVCurrentCompany
+	ShowExpCol						:	$ShowExpColumn:Company:##SVCurrentCompany
+	ShowQtyCol						:	$ShowQTYColumn:Company:##SVCurrentCompany
+	ShowGRtCol						:	$ShowGSTRColumn:Company:##SVCurrentCompany
+	ShowIRtCol						:	$ShowIRteColumn:Company:##SVCurrentCompany
+	
+	ShowLicNo						:	$ShowLicNo:Company:##SVCurrentCompany
+	PesticideLicNo 					: 	$PesticideLicNo:Company:##SVCurrentCompany
+	FertilizerLicNo 				: 	$FertilizerLicNo:Company:##SVCurrentCompany
+	SeedLicNo						: 	$SeedLicNo:Company:##SVCurrentCompany
+	
+	ShowPrevBal						:	$ShowPrevBal:Company:##SVCurrentCompany
+	
+	ContactPerson					:	$ContactPerson:Company:##SVCurrentCompany
+	
+;; © Saurabh Chaure
+;; End of the file

@@ -1,0 +1,18 @@
+;; Refresh the TDL
+
+[#Form	:  DSP Print RightButtons Template ]
+	
+	Add	: Top Button	: Refresh TDL New
+	
+
+[Button	: Refresh TDL New]
+	
+	Use		: Right Button Template
+	Title	: "Refresh TDL New"
+	Key		: Ctrl + R
+	Action	: Refresh TDL
+	
+
+
+;; © Saurabh Chaure
+;; End of the File
